@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVGOperationsAndStructure
+namespace Geesus.Svg.Operation
 {
     
     public class TestEnvironment

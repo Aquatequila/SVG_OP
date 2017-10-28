@@ -14,7 +14,7 @@ using System.IO;
 //RenderTargetBitmap bmp = new RenderTargetBitmap((int)Canvas1.Width, (int)Canvas1.Height, 96, 96, PixelFormats.Default);
 //bmp.Render(Canvas1);
 
-namespace SVGOperationsAndStructure
+namespace Geesus.Svg.Operation
 {
     
     class SvgDocumentParser // XAML may need F1 in front of every path lsdflak j

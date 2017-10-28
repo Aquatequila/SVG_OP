@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SVGOperationsAndStructure
+namespace Geesus.Svg.Operation
 {
     public delegate void tagWriter(string tagname, Dictionary<string, string> attributes, bool hasContent);
     public delegate void endOfTagWithContent(string tagname);
