@@ -17,14 +17,14 @@ namespace Geesus.Svg.Operation
 
         private void WriteXmlHeader()
         {
-
+            document?.WriteLine("<?xml version=\"1.0\"?>");
         }
 
         public void WriteToFile (string filenameAndPath,  SvgWrapper source)
         {
             document = new System.IO.StreamWriter(filenameAndPath);
 
-            document.WriteLine("<?xml version=\"1.0\"?>");
+            WriteXmlHeader();
 
             source.WriteToFile(writeStartTag, endTagWithContent);
 

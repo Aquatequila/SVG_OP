@@ -39,16 +39,19 @@ namespace Geesus.Svg.Operation
 
             SvgDocumentWriter writer = new SvgDocumentWriter();
 
-            SvgWrapper SvgHandler = new SvgWrapper();
-            SvgHandler.SetChild("one", line);
+            SvgWrapper wrapper = new SvgWrapper();
+            wrapper.SetChild("one", line);
 
-            writer.WriteToFile("MySvg.svg", SvgHandler);
+            writer.WriteToFile("MySvg.svg", wrapper);
         }
 
         static void Main(string[] args)
         {
             var parser = new SvgDocumentParser();
-            parser.Parse();
+            var wrapper = parser.Parse();
+            var writer = new SvgDocumentWriter();
+            writer.WriteToFile("MySvg.svg", wrapper);
+
         }
     }
 }

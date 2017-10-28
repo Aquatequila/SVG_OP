@@ -6,6 +6,29 @@ using System.Threading.Tasks;
 
 namespace Geesus.Svg.Operation
 {
+    public struct BoundingRectangle
+    {
+        public double minX;
+        public double maxX;
+        public double minY;
+        public double maxY;
+
+        public void Initialize(double x, double y)
+        {
+            maxX = x;
+            minX = x;
+            minY = y;
+            maxY = y;
+        }
+        public void Set(double x, double y)
+        {
+            maxX = maxX < x ? x : maxX;
+            minX = minX < x ? minX : x;
+
+            maxY = maxY < y ? y : maxY;
+            minY = minY < y ? minY : y;
+        }
+    }
     public static class PathMatrixOperation
     {
         public static void RotatePathToDegrees(ref SvgElement svg, double degrees, SvgCommand center)
@@ -28,9 +51,72 @@ namespace Geesus.Svg.Operation
             }
         }
 
+        private static System.Windows.Point GetCenterPoint(BoundingRectangle box)
+        {
+            double x = (box.maxX - box.minX) / 2 + box.minX;
+            double y = (box.maxY - box.minY) / 2 + box.minY;
+
+            return new System.Windows.Point(x,y);
+
+        }
+
         private static double CalculateAngleBetween(SvgCommand point, SvgCommand center)
         {
-            throw new NotImplementedException();
+            point.x -= center.x;
+            point.y -= center.y;
+
+            int xSector = point.x < 0 ? -1 : 1;
+            int ySector = point.y < 0 ? -1 : 1;
+
+            point.x = Math.Abs(point.x);
+            point.y = Math.Abs(point.y);
+
+            double hypotenuse = Math.Sqrt(Math.Pow(point.x, 2) + Math.Pow(point.y, 2));
+
+            double angle = (180 / Math.PI) * Math.Asin(point.y / hypotenuse);
+
+            if (xSector < 1)
+            {
+                if (ySector < 1) // Sector 2
+                {
+                    angle += 180;
+                }
+                else // Sector 2
+                {
+                    angle += 90;
+                }
+            }
+            else
+            {
+                if (ySector < 1) // Sector 4
+                {
+                    angle += 270;
+                }
+            }
+            Console.WriteLine($"Angle : {angle}");
+            return angle;
+        }
+            
+
+        public static BoundingRectangle CalculateBoundingRectangle(SvgElement svg)
+        {
+            var boundingRectangle = new BoundingRectangle();
+            var notInitialized = true;
+
+            foreach(var Point in svg.Path)
+            {
+                if (notInitialized)
+                {
+                    notInitialized = false;
+                    boundingRectangle.Initialize(Point.x, Point.y);
+                }
+                else
+                {
+                    boundingRectangle.Set(Point.x, Point.y);
+                }
+            }
+
+            return boundingRectangle;
         }
 
         private static SvgCommand NormalizePoint(SvgCommand point, SvgCommand center)

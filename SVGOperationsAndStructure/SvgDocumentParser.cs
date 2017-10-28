@@ -159,39 +159,47 @@ namespace Geesus.Svg.Operation
         public SvgWrapper Parse()
         {
             Console.WriteLine("start parsing document...");
-            var svgDocumentHandler = new SvgWrapper();
-            var doc = new XmlDocument();
-            doc.Load(Path);
-
-            //Console.WriteLine(doc.DocumentElement.Name);
-
-            foreach (XmlAttribute attribute in doc.DocumentElement.Attributes)
+            try
             {
-                if (attribute.Name == "viewbox")
-                {
-                    svgDocumentHandler.Attributes.Remove("viewbox");
-                    svgDocumentHandler.Attributes.Add(attribute.Name, attribute.Value);
-                }
-            }
-            int i = 0;
-            foreach (XmlNode elem in doc.DocumentElement)
-            {
-                SvgElement svg = new SvgElement();
-                //Console.WriteLine(elem.Name + " : ");
+                var svgWrapper = new SvgWrapper();
+                var doc = new XmlDocument();
+                doc.Load(Path);
 
-                foreach (XmlAttribute attribute in elem.Attributes)
+                //Console.WriteLine(doc.DocumentElement.Name);
+
+                foreach (XmlAttribute attribute in doc.DocumentElement.Attributes) // root node
                 {
-                    svg.SetAttribute(attribute.Name, attribute.Value);
-                    //Console.WriteLine(attribute.Name + "=" + attribute.Value + ", ");
+                    if (attribute.Name == "viewbox")
+                    {
+                        svgWrapper.Attributes.Remove("viewbox");
+                        svgWrapper.Attributes.Add(attribute.Name, attribute.Value);
+                    }
                 }
-                svg.Path = ParseParth(svg.Attributes["d"]);
-                //svg.WriteToConsole();
-                svgDocumentHandler.SetChild($"{i++}", svg);
+                int i = 0;
+                foreach (XmlNode elem in doc.DocumentElement)
+                {
+                    SvgElement svg = new SvgElement();
+                    //Console.WriteLine(elem.Name + " : ");
+
+                    foreach (XmlAttribute attribute in elem.Attributes)
+                    {
+                        svg.SetAttribute(attribute.Name, attribute.Value);
+                        //Console.WriteLine(attribute.Name + "=" + attribute.Value + ", ");
+                    }
+                    svg.Path = ParseParth(svg.Attributes["d"]);
+                    //svg.WriteToConsole();
+                    svgWrapper.SetChild($"{i++}", svg);
+                }
+                //SVGDocumentWriter writer = new SVGDocumentWriter();
+                //writer.WriteToFile("otherSvg.svg", svgWrapper);
+                Console.WriteLine("finished parsing document...");
+                return svgWrapper;
             }
-            //SVGDocumentWriter writer = new SVGDocumentWriter();
-            //writer.WriteToFile("otherSvg.svg", svgDocumentHandler);
-            Console.WriteLine("finished parsing document...");
-            return svgDocumentHandler;
+            catch (XmlException)
+            {
+                Console.WriteLine("SvgDocumentParser.Parse() : Syntax error in svg file found");
+                return null;
+            }
         }
 
     }
